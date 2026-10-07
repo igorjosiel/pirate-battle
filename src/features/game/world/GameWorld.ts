@@ -1,12 +1,21 @@
 import { Container, Graphics } from "pixi.js";
 import { Player } from "../entities/Player";
 import { InputManager } from "../input/InputManager";
+import { Projectile } from "../entities/Projectile";
 
 export class GameWorld extends Container {
     private player: Player;
+    private input: InputManager;
+
+    private projectiles: Projectile[] = [];
+
+    private fireCooldown = 0;
+    private fireRate = 0.25;
 
     constructor(input: InputManager) {
         super();
+
+        this.input = input;
 
         this.createArena();
         this.createIsland();
@@ -27,6 +36,17 @@ export class GameWorld extends Container {
             this.player.x = previousX;
             this.player.y = previousY;
         }
+
+        for (const projectile of this.projectiles) {
+            projectile.update(deltaTime);
+        }
+
+        if (this.input.isPressed(" ")) {
+            // tiro
+        }
+
+        this.updateShooting(deltaTime);
+        this.updateProjectiles(deltaTime, width, height);
     }
 
     createArena() {
@@ -60,5 +80,64 @@ export class GameWorld extends Container {
         const distance = Math.hypot(dx, dy);
 
         return distance < islandRadius + playerRadius;
+    }
+
+    private updateShooting(deltaTime: number) {
+        this.fireCooldown -= deltaTime;
+
+        if (
+            this.input.isPressed(" ") &&
+            this.fireCooldown <= 0
+        ) {
+            const projectile = new Projectile(
+                this.player.x,
+                this.player.y,
+                this.player.rotation
+            );
+
+            this.projectiles.push(projectile);
+            this.addChild(projectile);
+
+            this.fireCooldown = this.fireRate;
+        }
+    }
+
+    private updateProjectiles(
+        deltaTime: number,
+        width: number,
+        height: number
+    ) {
+        for (let i = this.projectiles.length - 1; i >= 0; i--) {
+            const projectile = this.projectiles[i];
+
+            projectile.update(deltaTime);
+
+            const outside =
+                projectile.x < 0 ||
+                projectile.x > width ||
+                projectile.y < 0 ||
+                projectile.y > height;
+
+            const hitIsland = this.checkProjectileIslandCollision(projectile);
+
+            if (outside || hitIsland) {
+                this.removeChild(projectile);
+                this.projectiles.splice(i, 1);
+            }
+        }
+    }
+
+    private checkProjectileIslandCollision(projectile: Projectile) {
+        const islandX = 600;
+        const islandY = 400;
+        const islandRadius = 100;
+        const projectileRadius = 5;
+
+        const dx = projectile.x - islandX;
+        const dy = projectile.y - islandY;
+
+        const distance = Math.hypot(dx, dy);
+
+        return distance < islandRadius + projectileRadius;
     }
 }
