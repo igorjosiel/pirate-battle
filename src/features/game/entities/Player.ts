@@ -4,6 +4,7 @@ import { InputManager } from "../input/InputManager";
 export class Player extends Container {
     private speed = 10;
     private rotationSpeed = 0.2;
+    private health = 100;
     private input: InputManager;
 
     constructor(input: InputManager) {
@@ -64,5 +65,11 @@ export class Player extends Container {
             margin,
             Math.min(height - margin, this.y)
         );
+    }
+
+    takeDamage(amount: number) {
+        this.health -= amount;
+
+        console.log("Vida:", this.health);
     }
 }
