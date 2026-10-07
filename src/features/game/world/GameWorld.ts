@@ -18,7 +18,15 @@ export class GameWorld extends Container {
     }
 
     update(deltaTime: number, width: number, height: number) {
+        const previousX = this.player.x;
+        const previousY = this.player.y;
+
         this.player.update(deltaTime, width, height);
+
+        if (this.checkIslandCollision()) {
+            this.player.x = previousX;
+            this.player.y = previousY;
+        }
     }
 
     createArena() {
@@ -35,8 +43,22 @@ export class GameWorld extends Container {
         const island = new Graphics();
 
         island.circle(600, 400, 100);
-        island.fill("#8b7355");
+        island.fill("#4a90e2");
 
         this.addChild(island);
+    }
+
+    private checkIslandCollision() {
+        const islandX = 600;
+        const islandY = 400;
+        const islandRadius = 100;
+        const playerRadius = 40;
+
+        const dx = this.player.x - islandX;
+        const dy = this.player.y - islandY;
+
+        const distance = Math.hypot(dx, dy);
+
+        return distance < islandRadius + playerRadius;
     }
 }
