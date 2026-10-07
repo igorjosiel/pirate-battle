@@ -9,6 +9,7 @@ export class GameWorld extends Container {
     private input: InputManager;
     private chaser: Chaser;
     private chaserActive = true;
+    private score = 0;
 
     private projectiles: Projectile[] = [];
 
@@ -37,6 +38,10 @@ export class GameWorld extends Container {
         const previousY = this.player.y;
 
         this.player.update(deltaTime, width, height);
+
+        if (this.player.getDead()) {
+            return;
+        }
 
         if (this.checkIslandCollision()) {
             this.player.x = previousX;
@@ -137,6 +142,8 @@ export class GameWorld extends Container {
                 if (killed) {
                     this.removeChild(this.chaser);
                     this.chaserActive = false;
+
+                    this.addScore();
                 }
 
                 continue;
@@ -197,5 +204,11 @@ export class GameWorld extends Container {
         const chaserRadius = 25;
 
         return distance < projectileRadius + chaserRadius;
+    }
+
+    private addScore() {
+        this.score += 1;
+
+        console.log("Score:", this.score);
     }
 }

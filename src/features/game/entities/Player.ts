@@ -6,6 +6,7 @@ export class Player extends Container {
     private rotationSpeed = 0.2;
     private health = 100;
     private input: InputManager;
+    private isDead = false;
 
     constructor(input: InputManager) {
         super();
@@ -29,6 +30,10 @@ export class Player extends Container {
     }
 
     update(deltaTime: number, width: number, height: number) {
+        if (this.isDead) {
+            return;
+        }
+
         if (this.input.isPressed("a")) {
             this.rotation -= this.rotationSpeed * deltaTime;
         }
@@ -68,6 +73,19 @@ export class Player extends Container {
     }
 
     takeDamage(amount: number) {
+        if (this.isDead) {
+            return;
+        }
+
         this.health -= amount;
+
+        if (this.health <= 0) {
+            this.health = 0;
+            this.isDead = true;
+        }
+    }
+
+    getDead() {
+        return this.isDead;
     }
 }
