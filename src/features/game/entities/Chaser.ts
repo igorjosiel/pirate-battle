@@ -2,6 +2,7 @@ import { Container, Graphics } from "pixi.js";
 
 export class Chaser extends Container {
     private speed = 1;
+    private health = 50;
 
     constructor(x: number, y: number) {
         super();
@@ -45,5 +46,13 @@ export class Chaser extends Container {
             directionX,
             -directionY
         );
+    }
+
+    takeDamage(amount: number) {
+        this.health -= amount;
+    }
+
+    isDead() {
+        return this.health <= 0;
     }
 }

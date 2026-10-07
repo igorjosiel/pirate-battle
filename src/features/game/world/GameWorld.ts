@@ -124,6 +124,24 @@ export class GameWorld extends Container {
 
             projectile.update(deltaTime);
 
+            if (
+                this.chaserActive &&
+                this.checkProjectileChaserCollision(projectile)
+            ) {
+                this.chaser.takeDamage(25);
+                const killed = this.chaser.isDead();
+
+                this.removeChild(projectile);
+                this.projectiles.splice(i, 1);
+
+                if (killed) {
+                    this.removeChild(this.chaser);
+                    this.chaserActive = false;
+                }
+
+                continue;
+            }
+
             const outside =
                 projectile.x < 0 ||
                 projectile.x > width ||
@@ -167,5 +185,17 @@ export class GameWorld extends Container {
 
     private destroyChaser() {
         this.removeChild(this.chaser);
+    }
+
+    private checkProjectileChaserCollision(projectile: Projectile) {
+        const dx = projectile.x - this.chaser.x;
+        const dy = projectile.y - this.chaser.y;
+
+        const distance = Math.hypot(dx, dy);
+
+        const projectileRadius = 5;
+        const chaserRadius = 25;
+
+        return distance < projectileRadius + chaserRadius;
     }
 }

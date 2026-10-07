@@ -69,7 +69,5 @@ export class Player extends Container {
 
     takeDamage(amount: number) {
         this.health -= amount;
-
-        console.log("Vida:", this.health);
     }
 }
