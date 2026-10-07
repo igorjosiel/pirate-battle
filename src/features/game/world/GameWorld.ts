@@ -13,12 +13,12 @@ export class GameWorld extends Container {
 
         this.player = new Player(input);
         this.player.position.set(400, 300);
-        
+
         this.addChild(this.player);
     }
 
-    update(deltaTime: number) {
-        this.player.update(deltaTime);
+    update(deltaTime: number, width: number, height: number) {
+        this.player.update(deltaTime, width, height);
     }
 
     createArena() {

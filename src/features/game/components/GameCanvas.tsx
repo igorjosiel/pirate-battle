@@ -14,7 +14,10 @@ export function GameCanvas() {
             return;
         }
 
-        const app = new Application();
+        const app = new Application({
+            width: 1200,
+            height: 800,
+        });
 
         let initialized = false;
         let cancelled = false;
@@ -31,7 +34,11 @@ export function GameCanvas() {
             app.stage.addChild(world);
 
             app.ticker.add((ticker) => {
-                world.update(ticker.deltaTime);
+                world.update(
+                    ticker.deltaTime,
+                    app.screen.width,
+                    app.screen.height
+                );
             });
 
             if (cancelled) {

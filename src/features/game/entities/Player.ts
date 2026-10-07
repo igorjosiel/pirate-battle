@@ -10,7 +10,7 @@ export class Player extends Container {
         super();
 
         this.input = input;
-        
+
         this.createShip();
     }
 
@@ -27,7 +27,7 @@ export class Player extends Container {
         this.addChild(ship);
     }
 
-    update(deltaTime: number) {
+    update(deltaTime: number, width: number, height: number) {
         if (this.input.isPressed("a")) {
             this.rotation -= this.rotationSpeed * deltaTime;
         }
@@ -48,5 +48,21 @@ export class Player extends Container {
             this.x -= directionX * this.speed * deltaTime;
             this.y -= directionY * this.speed * deltaTime;
         }
+
+        this.checkBounds(width, height);
+    }
+
+    private checkBounds(width: number, height: number) {
+        const margin = 30;
+
+        this.x = Math.max(
+            margin,
+            Math.min(width - margin, this.x)
+        );
+
+        this.y = Math.max(
+            margin,
+            Math.min(height - margin, this.y)
+        );
     }
 }
