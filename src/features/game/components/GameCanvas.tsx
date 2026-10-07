@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Application } from "pixi.js";
+import { GameWorld } from "../world/GameWorld";
+import { InputManager } from "../input/InputManager";
 
 export function GameCanvas() {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -13,6 +15,7 @@ export function GameCanvas() {
         }
 
         const app = new Application();
+
         let initialized = false;
         let cancelled = false;
 
@@ -20,6 +23,15 @@ export function GameCanvas() {
             await app.init({
                 resizeTo: container,
                 background: "#1b4965",
+            });
+
+            const input = new InputManager();
+            const world = new GameWorld(input);
+
+            app.stage.addChild(world);
+
+            app.ticker.add((ticker) => {
+                world.update(ticker.deltaTime);
             });
 
             if (cancelled) {
