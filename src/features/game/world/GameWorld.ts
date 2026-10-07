@@ -2,10 +2,12 @@ import { Container, Graphics } from "pixi.js";
 import { Player } from "../entities/Player";
 import { InputManager } from "../input/InputManager";
 import { Projectile } from "../entities/Projectile";
+import { Chaser } from "../entities/Chaser";
 
 export class GameWorld extends Container {
     private player: Player;
     private input: InputManager;
+    private chaser: Chaser;
 
     private projectiles: Projectile[] = [];
 
@@ -21,9 +23,12 @@ export class GameWorld extends Container {
         this.createIsland();
 
         this.player = new Player(input);
+        this.chaser = new Chaser(900, 300);
+
         this.player.position.set(400, 300);
 
         this.addChild(this.player);
+        this.addChild(this.chaser);
     }
 
     update(deltaTime: number, width: number, height: number) {
@@ -37,13 +42,11 @@ export class GameWorld extends Container {
             this.player.y = previousY;
         }
 
-        for (const projectile of this.projectiles) {
-            projectile.update(deltaTime);
-        }
-
-        if (this.input.isPressed(" ")) {
-            // tiro
-        }
+        this.chaser.update(
+            deltaTime,
+            this.player.x,
+            this.player.y
+        );
 
         this.updateShooting(deltaTime);
         this.updateProjectiles(deltaTime, width, height);
