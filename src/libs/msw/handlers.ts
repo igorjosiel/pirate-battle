@@ -15,6 +15,8 @@ export const handlers = [
     }),
 
     http.post("/api/game/start", () => {
+        currentScore = 0;
+
         const game: Game = {
             id: "game-1",
             status: "playing",
@@ -28,7 +30,7 @@ export const handlers = [
         const game: Game = {
             id: "game-1",
             status: "finished",
-            score: 0,
+            score: currentScore,
         };
 
         return HttpResponse.json(game);

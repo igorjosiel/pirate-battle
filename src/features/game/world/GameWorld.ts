@@ -31,10 +31,13 @@ export class GameWorld extends Container {
 
     private paused = false;
 
-    constructor(input: InputManager) {
+    private onScoreChange?: (score: number) => void;
+
+    constructor(input: InputManager, onScoreChange?: (score: number) => void) {
         super();
 
         this.input = input;
+        this.onScoreChange = onScoreChange;
 
         this.createArena();
         this.createIsland();
@@ -580,7 +583,9 @@ export class GameWorld extends Container {
     }
 
     private addScore() {
-        this.score += 1;
+        this.score += 100;
+
+        this.onScoreChange?.(this.score);
     }
 
     getScore() {

@@ -2,8 +2,11 @@ import { useEffect, useRef } from "react";
 import { Application } from "pixi.js";
 import { GameWorld } from "../world/GameWorld";
 import { InputManager } from "../input/InputManager";
+import { useUpdateScore } from "../../../hooks/useUpdateScore";
 
 export function GameCanvas() {
+    const { mutate: updateScore } = useUpdateScore();
+
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -29,7 +32,9 @@ export function GameCanvas() {
             });
 
             const input = new InputManager();
-            const world = new GameWorld(input);
+            const world = new GameWorld(input, () => {
+                updateScore(100);
+            });
 
             app.stage.addChild(world);
 
