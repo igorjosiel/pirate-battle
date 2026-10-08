@@ -3,9 +3,13 @@ import { Application } from "pixi.js";
 import { GameWorld } from "../world/GameWorld";
 import { InputManager } from "../input/InputManager";
 import { useUpdateScore } from "../../../hooks/useUpdateScore";
+import { useStartGame } from "../../../hooks/useStartGame";
+import { useFinishGame } from "../../../hooks/useFinishGame";
 
 export function GameCanvas() {
     const { mutate: updateScore } = useUpdateScore();
+    const { mutate: startGame } = useStartGame();
+    const { mutate: finishGame } = useFinishGame();
 
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -32,9 +36,16 @@ export function GameCanvas() {
             });
 
             const input = new InputManager();
-            const world = new GameWorld(input, () => {
-                updateScore(100);
-            });
+
+            startGame();
+
+            const world = new GameWorld(
+                input,
+                () => {
+                    updateScore(100);
+                }, () => {
+                    finishGame();
+                });
 
             app.stage.addChild(world);
 

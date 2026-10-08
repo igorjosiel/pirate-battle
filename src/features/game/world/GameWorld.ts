@@ -32,12 +32,18 @@ export class GameWorld extends Container {
     private paused = false;
 
     private onScoreChange?: (score: number) => void;
+    private onGameOver?: () => void;
 
-    constructor(input: InputManager, onScoreChange?: (score: number) => void) {
+    constructor(
+        input: InputManager,
+        onScoreChange?: (score: number) => void,
+        onGameOver?: () => void
+    ) {
         super();
 
         this.input = input;
         this.onScoreChange = onScoreChange;
+        this.onGameOver = onGameOver;
 
         this.createArena();
         this.createIsland();
@@ -130,6 +136,8 @@ export class GameWorld extends Container {
 
         if (this.player.getDead()) {
             this.gameOver = true;
+            this.onGameOver?.();
+
             return;
         }
 
@@ -138,6 +146,8 @@ export class GameWorld extends Container {
         if (this.remainingTime <= 0) {
             this.remainingTime = 0;
             this.gameOver = true;
+            this.onGameOver?.();
+            
             return;
         }
 
