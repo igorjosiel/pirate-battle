@@ -31,7 +31,7 @@ export function GameCanvas() {
 
         async function initialize() {
             await app.init({
-                resizeTo: container,
+                resizeTo: container!,
                 background: "#1b4965",
             });
 
@@ -64,8 +64,10 @@ export function GameCanvas() {
                 return;
             }
 
-            container.appendChild(app.canvas);
-            initialized = true;
+            if (container) {
+                container.appendChild(app.canvas);
+                initialized = true;
+            }
         }
 
         initialize();
