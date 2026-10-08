@@ -34,8 +34,10 @@ export function GameCanvas() {
             app.stage.addChild(world);
 
             app.ticker.add((ticker) => {
+                const deltaTime = ticker.deltaMS / 1000;
+
                 world.update(
-                    ticker.deltaTime,
+                    deltaTime,
                     app.screen.width,
                     app.screen.height
                 );

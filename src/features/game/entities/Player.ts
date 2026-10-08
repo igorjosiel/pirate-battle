@@ -2,8 +2,8 @@ import { Container, Graphics } from "pixi.js";
 import { InputManager } from "../input/InputManager";
 
 export class Player extends Container {
-    private speed = 10;
-    private rotationSpeed = 0.2;
+    private speed = 60;
+    private rotationSpeed = 10;
     private health = 100;
     private input: InputManager;
     private isDead = false;
@@ -87,5 +87,9 @@ export class Player extends Container {
 
     getDead() {
         return this.isDead;
+    }
+
+    getHealth() {
+        return this.health;
     }
 }

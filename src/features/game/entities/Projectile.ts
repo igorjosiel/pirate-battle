@@ -1,7 +1,7 @@
 import { Graphics } from "pixi.js";
 
 export class Projectile extends Graphics {
-    private speed = 50;
+    private speed = 200;
     private directionX: number;
     private directionY: number;
 

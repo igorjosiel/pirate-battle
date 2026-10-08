@@ -1,7 +1,7 @@
 import { Container, Graphics } from "pixi.js";
 
 export class Chaser extends Container {
-    private speed = 1;
+    private speed = 60;
     private health = 50;
 
     constructor(x: number, y: number) {

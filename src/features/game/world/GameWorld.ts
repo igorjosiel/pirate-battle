@@ -1,4 +1,4 @@
-import { Container, Graphics } from "pixi.js";
+import { Container, Graphics, Text } from "pixi.js";
 import { Player } from "../entities/Player";
 import { InputManager } from "../input/InputManager";
 import { Projectile } from "../entities/Projectile";
@@ -10,11 +10,19 @@ export class GameWorld extends Container {
     private chaser: Chaser;
     private chaserActive = true;
     private score = 0;
+    private remainingTime = 60;
 
     private projectiles: Projectile[] = [];
 
     private fireCooldown = 0;
     private fireRate = 0.25;
+
+    // definite assignment assertion (!)
+    private healthText!: Text;
+    private scoreText!: Text;
+    private timeText!: Text;
+
+    private gameOver = false;
 
     constructor(input: InputManager) {
         super();
@@ -31,15 +39,65 @@ export class GameWorld extends Container {
 
         this.addChild(this.player);
         this.addChild(this.chaser);
+        this.createHud();
+    }
+
+    private createHud() {
+        this.healthText = new Text({
+            text: "Vida: 100",
+            style: {
+                fill: "#ffffff",
+                fontSize: 24,
+            },
+        });
+
+        this.scoreText = new Text({
+            text: "Pontos: 0",
+            style: {
+                fill: "#ffffff",
+                fontSize: 24,
+            },
+        });
+
+        this.timeText = new Text({
+            text: "Tempo: 60",
+            style: {
+                fill: "#ffffff",
+                fontSize: 24,
+            },
+        });
+
+        this.healthText.position.set(20, 20);
+        this.scoreText.position.set(20, 50);
+        this.timeText.position.set(20, 80);
+
+        this.addChild(this.healthText);
+        this.addChild(this.scoreText);
+        this.addChild(this.timeText);
     }
 
     update(deltaTime: number, width: number, height: number) {
+        if (this.gameOver) {
+            return;
+        }
+
         const previousX = this.player.x;
         const previousY = this.player.y;
 
         this.player.update(deltaTime, width, height);
 
         if (this.player.getDead()) {
+            this.gameOver = true;
+
+            return;
+        }
+
+        this.remainingTime -= deltaTime;
+
+        if (this.remainingTime <= 0) {
+            this.remainingTime = 0;
+            this.gameOver = true;
+
             return;
         }
 
@@ -61,6 +119,10 @@ export class GameWorld extends Container {
                 this.chaserActive = false;
             }
         }
+
+        this.healthText.text = `Vida: ${this.player.getHealth()}`;
+        this.scoreText.text = `Pontos: ${this.score}`;
+        this.timeText.text = `Tempo: ${Math.ceil(this.remainingTime)}`;
 
         this.updateShooting(deltaTime);
         this.updateProjectiles(deltaTime, width, height);
@@ -210,5 +272,21 @@ export class GameWorld extends Container {
         this.score += 1;
 
         console.log("Score:", this.score);
+    }
+
+    getScore() {
+        return this.score;
+    }
+
+    getRemainingTime() {
+        return this.remainingTime;
+    }
+
+    getPlayerHealth() {
+        return this.player.getHealth();
+    }
+
+    getGameOver() {
+        return this.gameOver;
     }
 }
