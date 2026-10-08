@@ -179,6 +179,50 @@ export class GameWorld extends Container {
 
             this.fireCooldown = this.fireRate;
         }
+
+        if (
+            this.input.isPressed("q") &&
+            this.fireCooldown <= 0
+        ) {
+            const sideRotation = this.player.rotation - Math.PI / 2;
+
+            for (let i = -1; i <= 1; i++) {
+                const offset = i * 15;
+
+                const projectile = new Projectile(
+                    this.player.x,
+                    this.player.y + offset,
+                    sideRotation
+                );
+
+                this.projectiles.push(projectile);
+                this.addChild(projectile);
+            }
+
+            this.fireCooldown = this.fireRate;
+        }
+
+        if (
+            this.input.isPressed("e") &&
+            this.fireCooldown <= 0
+        ) {
+            const sideRotation = this.player.rotation + Math.PI / 2;
+
+            for (let i = -1; i <= 1; i++) {
+                const offset = i * 15;
+
+                const projectile = new Projectile(
+                    this.player.x,
+                    this.player.y + offset,
+                    sideRotation
+                );
+
+                this.projectiles.push(projectile);
+                this.addChild(projectile);
+            }
+
+            this.fireCooldown = this.fireRate;
+        }
     }
 
     private updateProjectiles(
