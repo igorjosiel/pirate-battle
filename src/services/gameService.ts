@@ -12,3 +12,15 @@ export async function startGame(): Promise<Game> {
 
     return response.data;
 }
+
+export async function finishGame(): Promise<Game> {
+    const response = await api.post<Game>("/game/finish");
+
+    return response.data;
+}
+
+export async function updateScore(): Promise<Game> {
+    const response = await api.post<Game>("/game/score");
+
+    return response.data;
+}

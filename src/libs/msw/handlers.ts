@@ -21,4 +21,24 @@ export const handlers = [
 
         return HttpResponse.json(game);
     }),
+
+    http.post("/api/game/finish", () => {
+        const game: Game = {
+            id: "game-1",
+            status: "finished",
+            score: 0,
+        };
+
+        return HttpResponse.json(game);
+    }),
+
+    http.post("/api/game/score", () => {
+        const game: Game = {
+            id: "game-1",
+            status: "playing",
+            score: 100,
+        };
+
+        return HttpResponse.json(game);
+    }),
 ];

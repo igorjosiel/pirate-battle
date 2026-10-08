@@ -1,28 +1,37 @@
 import { useGame } from "../hooks/useGame";
 import { useStartGame } from "../hooks/useStartGame";
+import { useUpdateScore } from "../hooks/useUpdateScore";
 
 function App() {
-  const { data: game, isLoading, isError } = useGame();
-  const { mutate: startGame, isPending } = useStartGame();
+  const { data: game, isLoading } = useGame();
 
-  if (isLoading) {
-    return <p>Carregando...</p>;
-  }
+  const { mutate: startGame } = useStartGame();
 
-  if (isError) {
-    return <p>Erro ao carregar o jogo.</p>;
-  }
+  const { mutate: updateScore, isPending: isUpdatingScore } =
+    useUpdateScore();
 
   return (
     <div>
-      <p>Status: {isLoading ? "Carregando..." : game?.status}</p>
+      <p>
+        Status: {isLoading ? "Carregando..." : game?.status}
+      </p>
+
       <p>Score: {game?.score}</p>
 
+      <button onClick={() => startGame()}>
+        Iniciar jogo
+      </button>
+
       <button
-        onClick={() => startGame()}
-        disabled={isPending}
+        onClick={() => updateScore()}
+        disabled={
+          isUpdatingScore ||
+          game?.status !== "playing"
+        }
       >
-        {isPending ? "Iniciando..." : "Iniciar jogo"}
+        {isUpdatingScore
+          ? "Atualizando..."
+          : "Adicionar 100 pontos"}
       </button>
     </div>
   );
