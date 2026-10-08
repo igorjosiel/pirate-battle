@@ -3,16 +3,21 @@ import { Player } from "../entities/Player";
 import { InputManager } from "../input/InputManager";
 import { Projectile } from "../entities/Projectile";
 import { Chaser } from "../entities/Chaser";
+import { Shooter } from "../entities/Shooter";
+import { EnemyProjectile } from "../entities/EnemyProjectile";
 
 export class GameWorld extends Container {
     private player: Player;
     private input: InputManager;
     private chaser: Chaser;
     private chaserActive = true;
+    private shooter: Shooter;
+    private shooterActive = true;
     private score = 0;
     private remainingTime = 60;
 
     private projectiles: Projectile[] = [];
+    private enemyProjectiles: EnemyProjectile[] = [];
 
     private fireCooldown = 0;
     private fireRate = 0.25;
@@ -34,12 +39,81 @@ export class GameWorld extends Container {
 
         this.player = new Player(input);
         this.chaser = new Chaser(900, 300);
+        this.shooter = new Shooter(800, 500);
 
         this.player.position.set(400, 300);
 
         this.addChild(this.player);
         this.addChild(this.chaser);
+        this.addChild(this.shooter);
         this.createHud();
+    }
+
+    private updateShooterShooting() {
+        if (!this.shooterActive) {
+            return;
+        }
+
+        if (!this.shooter.canShoot()) {
+            return;
+        }
+
+        const projectile = new EnemyProjectile(
+            this.shooter.x,
+            this.shooter.y,
+            this.shooter.rotation
+        );
+
+        this.enemyProjectiles.push(projectile);
+        this.addChild(projectile);
+
+        this.shooter.resetShootCooldown();
+    }
+
+    private updateEnemyProjectiles(
+        deltaTime: number,
+        width: number,
+        height: number
+    ) {
+        for (let i = this.enemyProjectiles.length - 1; i >= 0; i--) {
+            const projectile = this.enemyProjectiles[i];
+
+            projectile.update(deltaTime);
+
+            if (this.checkEnemyProjectilePlayerCollision(projectile)) {
+                this.player.takeDamage(25);
+
+                this.removeChild(projectile);
+                this.enemyProjectiles.splice(i, 1);
+
+                continue;
+            }
+
+            const outside =
+                projectile.x < 0 ||
+                projectile.x > width ||
+                projectile.y < 0 ||
+                projectile.y > height;
+
+            if (outside) {
+                this.removeChild(projectile);
+                this.enemyProjectiles.splice(i, 1);
+            }
+        }
+    }
+
+    private checkEnemyProjectilePlayerCollision(
+        projectile: EnemyProjectile
+    ) {
+        const dx = projectile.x - this.player.x;
+        const dy = projectile.y - this.player.y;
+
+        const distance = Math.hypot(dx, dy);
+
+        const projectileRadius = 5;
+        const playerRadius = 40;
+
+        return distance < projectileRadius + playerRadius;
     }
 
     private createHud() {
@@ -120,12 +194,23 @@ export class GameWorld extends Container {
             }
         }
 
+        if (this.shooterActive) {
+            this.shooter.update(
+                deltaTime,
+                this.player.x,
+                this.player.y
+            );
+
+            this.updateShooterShooting();
+        }
+
         this.healthText.text = `Vida: ${this.player.getHealth()}`;
         this.scoreText.text = `Pontos: ${this.score}`;
         this.timeText.text = `Tempo: ${Math.ceil(this.remainingTime)}`;
 
         this.updateShooting(deltaTime);
         this.updateProjectiles(deltaTime, width, height);
+        this.updateEnemyProjectiles(deltaTime, width, height);
     }
 
     createArena() {
