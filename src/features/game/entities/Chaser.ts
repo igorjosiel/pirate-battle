@@ -5,6 +5,7 @@ export class Chaser extends Container {
     private healthBar!: Graphics;
     private maxHealth = 50;
     private health = 50;
+    private ship!: Graphics;
 
     constructor(x: number, y: number) {
         super();
@@ -51,17 +52,17 @@ export class Chaser extends Container {
     }
 
     private createShip() {
-        const ship = new Graphics();
+        this.ship = new Graphics();
 
-        ship.moveTo(0, -25);
-        ship.lineTo(18, 25);
-        ship.lineTo(0, 15);
-        ship.lineTo(-18, 25);
-        ship.closePath();
+        this.ship.moveTo(0, -25);
+        this.ship.lineTo(18, 25);
+        this.ship.lineTo(0, 15);
+        this.ship.lineTo(-18, 25);
+        this.ship.closePath();
 
-        ship.fill("#d94f4f");
+        this.ship.fill("#d94f4f");
 
-        this.addChild(ship);
+        this.addChild(this.ship);
     }
 
     update(deltaTime: number, targetX: number, targetY: number) {
@@ -94,6 +95,21 @@ export class Chaser extends Container {
         }
 
         this.updateHealthBar();
+
+        let flashes = 0;
+
+        const interval = setInterval(() => {
+            this.ship.tint = this.ship.tint === 0xffffff
+                ? 0xff0000
+                : 0xffffff;
+
+            flashes++;
+
+            if (flashes >= 4) {
+                clearInterval(interval);
+                this.ship.tint = 0xff0000;
+            }
+        }, 50);
 
         return this.health <= 0;
     }
