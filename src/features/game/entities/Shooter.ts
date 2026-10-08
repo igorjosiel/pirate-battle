@@ -3,6 +3,8 @@ import { Container, Graphics } from "pixi.js";
 export class Shooter extends Container {
     private speed = 30;
     private health = 50;
+    private maxHealth = 50;
+    private healthBar!: Graphics;
     private shootCooldown = 0;
     private shootRate = 1.5;
     private shootRange = 100;
@@ -11,7 +13,44 @@ export class Shooter extends Container {
         super();
 
         this.position.set(x, y);
+
         this.createShip();
+        this.createHealthBar();
+    }
+
+    private createHealthBar() {
+        this.healthBar = new Graphics();
+
+        this.addChild(this.healthBar);
+
+        this.updateHealthBar();
+    }
+
+    private updateHealthBar() {
+        const width = 40;
+        const height = 5;
+
+        const healthPercent = this.health / this.maxHealth;
+
+        this.healthBar.clear();
+
+        this.healthBar.rect(
+            -width / 2,
+            -35,
+            width,
+            height
+        );
+
+        this.healthBar.fill("#333333");
+
+        this.healthBar.rect(
+            -width / 2,
+            -35,
+            width * healthPercent,
+            height
+        );
+
+        this.healthBar.fill("#2ecc71");
     }
 
     private createShip() {
@@ -66,6 +105,12 @@ export class Shooter extends Container {
 
     takeDamage(amount: number) {
         this.health -= amount;
+
+        if (this.health < 0) {
+            this.health = 0;
+        }
+
+        this.updateHealthBar();
 
         return this.health <= 0;
     }
