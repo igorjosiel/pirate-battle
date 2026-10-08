@@ -69,4 +69,13 @@ export class Shooter extends Container {
 
         return this.health <= 0;
     }
+
+    isInShootRange(targetX: number, targetY: number) {
+        const dx = targetX - this.x;
+        const dy = targetY - this.y;
+
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        return distance <= this.shootRange;
+    }
 }
