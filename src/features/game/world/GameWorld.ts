@@ -270,7 +270,7 @@ export class GameWorld extends Container {
                     projectile
                 )
             ) {
-                this.player.takeDamage(25);
+                this.player.takeDamage(projectile.getDamage());
 
                 this.removeChild(projectile);
                 this.enemyProjectiles.splice(i, 1);

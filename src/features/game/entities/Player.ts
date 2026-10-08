@@ -7,6 +7,7 @@ export class Player extends Container {
     private health = 100;
     private input: InputManager;
     private isDead = false;
+    private invulnerable = false;
 
     constructor(input: InputManager) {
         super();
@@ -32,6 +33,9 @@ export class Player extends Container {
     reset() {
         this.health = 100;
         this.isDead = false;
+        this.invulnerable = false;
+        this.visible = true;
+
         this.position.set(400, 300);
         this.rotation = 0;
     }
@@ -80,11 +84,27 @@ export class Player extends Container {
     }
 
     takeDamage(amount: number) {
-        if (this.isDead) {
+        if (this.invulnerable || this.isDead) {
             return;
         }
 
         this.health -= amount;
+
+        this.invulnerable = true;
+
+        let flashes = 0;
+
+        const interval = setInterval(() => {
+            this.visible = !this.visible;
+            flashes++;
+
+            if (flashes >= 6) {
+                clearInterval(interval);
+
+                this.visible = true;
+                this.invulnerable = false;
+            }
+        }, 80);
 
         if (this.health <= 0) {
             this.health = 0;

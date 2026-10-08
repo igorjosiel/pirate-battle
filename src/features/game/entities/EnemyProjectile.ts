@@ -4,6 +4,7 @@ export class EnemyProjectile extends Graphics {
     private speed = 250;
     private directionX: number;
     private directionY: number;
+    private damage = 10;
 
     constructor(x: number, y: number, rotation: number) {
         super();
@@ -20,5 +21,9 @@ export class EnemyProjectile extends Graphics {
     update(deltaTime: number) {
         this.x += this.directionX * this.speed * deltaTime;
         this.y += this.directionY * this.speed * deltaTime;
+    }
+
+    getDamage() {
+        return this.damage;
     }
 }
