@@ -29,6 +29,8 @@ export class GameWorld extends Container {
     private scoreText!: Text;
     private timeText!: Text;
 
+    private paused = false;
+
     constructor(input: InputManager) {
         super();
 
@@ -44,6 +46,16 @@ export class GameWorld extends Container {
 
         this.createHud();
         this.createInitialEnemies();
+    }
+
+    public togglePause() {
+        if (this.gameOver) return;
+
+        this.paused = !this.paused;
+    }
+
+    public isPaused() {
+        return this.paused;
     }
 
     private isInsideIsland(x: number, y: number) {
@@ -92,8 +104,20 @@ export class GameWorld extends Container {
     }
 
     update(deltaTime: number, width: number, height: number) {
+        if (this.input.isPressed("p")) {
+            this.togglePause();
+        }
+
+        if (this.paused) {
+            return;
+        }
+
         if (this.gameOver) {
             return;
+        }
+
+        if (this.input.wasPressed("p")) {
+            this.togglePause();
         }
 
         const previousX = this.player.x;
@@ -128,6 +152,8 @@ export class GameWorld extends Container {
         this.updateSpawning(deltaTime);
 
         this.updateHud();
+
+        this.input.update();
     }
 
     private updateEnemies(deltaTime: number) {
@@ -174,6 +200,44 @@ export class GameWorld extends Container {
                 }
             }
         }
+    }
+
+    public restart() {
+        // Remove todos os inimigos
+        for (const enemy of this.enemies) {
+            this.removeChild(enemy);
+            enemy.destroy();
+        }
+
+        this.enemies = [];
+
+        // Remove projéteis do jogador
+        for (const projectile of this.projectiles) {
+            this.removeChild(projectile);
+            projectile.destroy();
+        }
+
+        this.projectiles = [];
+
+        // Remove projéteis dos inimigos
+        for (const projectile of this.enemyProjectiles) {
+            this.removeChild(projectile);
+            projectile.destroy();
+        }
+
+        this.enemyProjectiles = [];
+
+        // Reinicia estado da partida
+        this.score = 0;
+        this.remainingTime = 60;
+        this.fireCooldown = 0;
+        this.gameOver = false;
+
+        // Reinicia jogador
+        this.player.reset();
+
+        this.updateHud();
+        this.createInitialEnemies();
     }
 
     private createEnemyProjectile(enemy: Shooter) {

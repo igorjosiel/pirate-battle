@@ -1,5 +1,6 @@
 export class InputManager {
     private keys = new Set<string>();
+    private previousKeys = new Set<string>();
 
     constructor() {
         window.addEventListener("keydown", this.handleKeyDown);
@@ -21,5 +22,18 @@ export class InputManager {
     destroy() {
         window.removeEventListener("keydown", this.handleKeyDown);
         window.removeEventListener("keyup", this.handleKeyUp);
+    }
+
+    public wasPressed(key: string) {
+        const normalizedKey = key.toLowerCase();
+
+        return (
+            this.keys.has(normalizedKey) &&
+            !this.previousKeys.has(normalizedKey)
+        );
+    }
+
+    public update() {
+        this.previousKeys = new Set(this.keys);
     }
 }

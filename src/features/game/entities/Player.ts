@@ -29,6 +29,13 @@ export class Player extends Container {
         this.addChild(ship);
     }
 
+    reset() {
+        this.health = 100;
+        this.isDead = false;
+        this.position.set(400, 300);
+        this.rotation = 0;
+    }
+
     update(deltaTime: number, width: number, height: number) {
         if (this.isDead) {
             return;
