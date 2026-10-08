@@ -19,8 +19,10 @@ export async function finishGame(): Promise<Game> {
     return response.data;
 }
 
-export async function updateScore(): Promise<Game> {
-    const response = await api.post<Game>("/game/score");
+export async function updateScore(points: number): Promise<Game> {
+    const response = await api.post<Game>("/game/score", {
+        points,
+    });
 
     return response.data;
 }

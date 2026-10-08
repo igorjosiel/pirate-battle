@@ -5,7 +5,7 @@ export function useUpdateScore() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: updateScore,
+        mutationFn: (points: number) => updateScore(points),
 
         onSuccess: (game) => {
             queryClient.setQueryData(["game"], game);

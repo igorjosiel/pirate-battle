@@ -23,7 +23,7 @@ function App() {
       </button>
 
       <button
-        onClick={() => updateScore()}
+        onClick={() => updateScore(100)}
         disabled={
           isUpdatingScore ||
           game?.status !== "playing"
